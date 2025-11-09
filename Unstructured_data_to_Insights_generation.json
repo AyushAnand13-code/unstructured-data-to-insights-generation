@@ -1,0 +1,844 @@
+{
+  "name": "Unstructured_data_to_Insights_generation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1b577e68-6fa3-402b-8e50-f6752e6eb64e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1Go1mY1SyIUaHExZagKJHZowcgyOkNpIF",
+            "mode": "list",
+            "cachedResultName": "Invoice Data Extraction",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1Go1mY1SyIUaHExZagKJHZowcgyOkNpIF"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        464,
+        0
+      ],
+      "id": "990706b6-7cd0-43af-b7aa-7f553d3d87b2",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "eBdMqHgR4XjyRaBB",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        656,
+        0
+      ],
+      "id": "6d2011d8-6c49-4821-8645-dfa2eb98872c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $binary.data.fileName.split(\".\")[1] }}",
+                    "rightValue": "png",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5902466a-b3b7-4a88-aae0-e5c57d9f2a25"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PNG"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1a72ef18-d69b-48b4-91d0-85c5cc0a895a",
+                    "leftValue": "={{ $binary.data.fileName.split(\".\")[1] }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1008,
+        32
+      ],
+      "id": "77cef44f-18a8-4964-9182-5539bb5ad509",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Data Extraction').item.json.text }} || {{ $json.ParsedResults[0].ParsedText }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n  \"invoice\": {\n    \"invoice_number\": \"BPXINV-00550\",\n    \"date\": \"23/05/2021\",\n    \"seller\": {\n      \"name\": \"Bioplex\",\n      \"tagline\": \"we love chemistry\",\n      \"address\": \"5 Rue Bader, Narbonne, Aude, 11100\",\n      \"phone\": \"'+33 140 260294\",\n      \"email\": \"marianne.guillaume@bioplex.fr\"\n    },\n    \"buyer\": {\n      \"name\": \"Roger Bigot\",\n      \"company\": \"bonbono\",\n      \"address\": \"4 Rue des Cites, Aubervilliers, Seine-Saint-Denis, 93300\",\n      \"phone\": \"'+33 148 340990\"\n    },\n    \"ship_to\": {\n      \"name\": \"Roger Bigot\",\n      \"company\": \"bonbono\",\n      \"address\": \"4 Rue des Cites, Aubervilliers, Seine-Saint-Denis, 93300\",\n      \"phone\": \"'+33 148 340990\"\n    },\n    \"salesperson\": \"Marianne de la Guillaume\",\n    \"po_number\": \"BPXPO-00536\",\n    \"payment_terms\": \"Due after 30 days\",\n    \"comments\": \"None\",\n    \"items\": [\n      {\n        \"quantity\": 10,\n        \"description\": \"Dextromethorphan polistirex\",\n        \"product_code\": \"BPXPN-00057\",\n        \"unit_price\": 12.45,\n        \"total\": 124.50\n      },\n      {\n        \"quantity\": 25,\n        \"description\": \"Venlafaxine Hydrochloride\",\n        \"product_code\": \"BPXPN-00012\",\n        \"unit_price\": 16.00,\n        \"total\": 400.00\n      },\n      {\n        \"quantity\": 25,\n        \"description\": \"Metoclopramide Hydrochloride\",\n        \"product_code\": \"BPXPN-00002\",\n        \"unit_price\": 9.99,\n        \"total\": 249.75\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Avobenzone, octinoxate\",\n        \"product_code\": \"BPXPN-00027\",\n        \"unit_price\": 4.45,\n        \"total\": 44.50\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Verapamil hydrochloride\",\n        \"product_code\": \"BPXPN-00066\",\n        \"unit_price\": 7.89,\n        \"total\": 78.90\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Tiagabine hydrochloride\",\n        \"product_code\": \"BPXPN-00017\",\n        \"unit_price\": 10.25,\n        \"total\": 153.75\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Ziprasidone hydrochloride\",\n        \"product_code\": \"BPXPN-00044\",\n        \"unit_price\": 34.99,\n        \"total\": 349.90\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Risperidone\",\n        \"product_code\": \"BPXPN-00023\",\n        \"unit_price\": 34.99,\n        \"total\": 349.90\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Metoprolol succinate\",\n        \"product_code\": \"BPXPN-00067\",\n        \"unit_price\": 34.99,\n        \"total\": 349.90\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Acetaminophen\",\n        \"product_code\": \"BPXPN-00045\",\n        \"unit_price\": 34.99,\n        \"total\": 349.90\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Sorafenib\",\n        \"product_code\": \"BPXPN-00018\",\n        \"unit_price\": 16.00,\n        \"total\": 240.00\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Telmisartan\",\n        \"product_code\": \"BPXPN-00022\",\n        \"unit_price\": 9.99,\n        \"total\": 149.85\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Famotidine\",\n        \"product_code\": \"BPXPN-00068\",\n        \"unit_price\": 4.45,\n        \"total\": 66.75\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Methylphenidate Hydrochloride\",\n        \"product_code\": \"BPXPN-00005\",\n        \"unit_price\": 7.89,\n        \"total\": 118.35\n      },\n      {\n        \"quantity\": 100,\n        \"description\": \"Ibuprofen\",\n        \"product_code\": \"BPXPN-00052\",\n        \"unit_price\": 0.99,\n        \"total\": 99.00\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Metformin Hydrochloride\",\n        \"product_code\": \"BPXPN-00046\",\n        \"unit_price\": 2.15,\n        \"total\": 32.25\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Avobenzone, Octisalate and Octocrylene\",\n        \"product_code\": \"BPXPN-00069\",\n        \"unit_price\": 16.99,\n        \"total\": 254.85\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Carisoprodol\",\n        \"product_code\": \"BPXPN-00070\",\n        \"unit_price\": 34.99,\n        \"total\": 349.90\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Losartan Potassium\",\n        \"product_code\": \"BPXPN-00047\",\n        \"unit_price\": 34.99,\n        \"total\": 349.90\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Pentazocine Hydrochloride and Naloxone Hydrochloride\",\n        \"product_code\": \"BPXPN-00051\",\n        \"unit_price\": 34.99,\n        \"total\": 349.90\n      },\n      {\n        \"quantity\": 25,\n        \"description\": \"Omeprazole\",\n        \"product_code\": \"BPXPN-00071\",\n        \"unit_price\": 9.99,\n        \"total\": 249.75\n      },\n      {\n        \"quantity\": 25,\n        \"description\": \"Losartan Potassium\",\n        \"product_code\": \"BPXPN-00019\",\n        \"unit_price\": 4.45,\n        \"total\": 111.25\n      },\n      {\n        \"quantity\": 10,\n        \"description\": \"Saline\",\n        \"product_code\": \"BPXPN-00048\",\n        \"unit_price\": 7.89,\n        \"total\": 78.90\n      },\n      {\n        \"quantity\": 25,\n        \"description\": \"Titanium dioxide\",\n        \"product_code\": \"BPXPN-00021\",\n        \"unit_price\": 10.25,\n        \"total\": 256.25\n      },\n      {\n        \"quantity\": 25,\n        \"description\": \"Bicalutamide\",\n        \"product_code\": \"BPXPN-00049\",\n        \"unit_price\": 2.15,\n        \"total\": 53.75\n      },\n      {\n        \"quantity\": 15,\n        \"description\": \"Ampicillin sodium\",\n        \"product_code\": \"BPXPN-00050\",\n        \"unit_price\": 0.00,\n        \"total\": 0.00\n      }\n    ],\n    \"total_amount\": 6610.95,\n    \"tax\": 596.45\n  }\n}\n\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        1856,
+        128
+      ],
+      "id": "25c56496-db20-401f-b73e-e04837711e6f",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        304
+      ],
+      "id": "d886d3aa-7dfb-493a-8b9f-2a45328bd600",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Cb79nCZvFh5UUIvW",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ocr.space/parse/image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "K84815545488957"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "=data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1744,
+        16
+      ],
+      "id": "5bb37643-8bea-41e5-ae95-7d55a4949c15",
+      "name": "OCR"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        112
+      ],
+      "id": "f2801ccc-33f8-4726-b9f5-eb074ff6ae85",
+      "name": "Data Extraction"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "578498df-5ff4-4328-83c4-d1a493ecabe2",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        176
+      ],
+      "id": "3fe92cd5-acba-45b2-aa18-19a5f2e23a93",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Download file').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1584,
+        80
+      ],
+      "id": "04f73936-c240-42bb-8d4b-c8f9d7659a3c",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "eBdMqHgR4XjyRaBB",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjxob3ocbZVXb_JV1GJQH0vsH6bbd_OCPB--XvYpFWY",
+          "mode": "list",
+          "cachedResultName": "invoice_data_extraction",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjxob3ocbZVXb_JV1GJQH0vsH6bbd_OCPB--XvYpFWY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "invoice_details",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjxob3ocbZVXb_JV1GJQH0vsH6bbd_OCPB--XvYpFWY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice_Number": "={{ $json.output.invoice.invoice_number }}",
+            "Date": "={{ $json.output.invoice.date }}",
+            "Billing_Company": "={{ $json.output.invoice.seller.name }}",
+            "Billing_Company_Address": "={{ $json.output.invoice.seller.address }}",
+            "Billing_Company_Email": "={{ $json.output.invoice.seller.email }}",
+            "Billing_Company_Phone": "={{ \"'\" + $json.output.invoice.seller.phone }}",
+            "Customer_Company_Name": "={{ $json.output.invoice.buyer.company }}",
+            "Total_Amount": "={{ $json.output.invoice.total_amount }}",
+            "Tax": "={{ $json.output.invoice.tax }}"
+          },
+          "matchingColumns": [
+            "Invoice_Number"
+          ],
+          "schema": [
+            {
+              "id": "Invoice_Number",
+              "displayName": "Invoice_Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Billing_Company",
+              "displayName": "Billing_Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Billing_Company_Address",
+              "displayName": "Billing_Company_Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Billing_Company_Email",
+              "displayName": "Billing_Company_Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Billing_Company_Phone",
+              "displayName": "Billing_Company_Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Customer_Company_Name",
+              "displayName": "Customer_Company_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total_Amount",
+              "displayName": "Total_Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tax",
+              "displayName": "Tax",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "UID",
+              "displayName": "UID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2240,
+        144
+      ],
+      "id": "62050667-f330-4f3e-828e-4f297408c441",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wsyIL9ZzwKqbI9Vs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b332945a-b248-453e-9478-ebccc8ca0c0e",
+              "name": "output.invoice.items",
+              "value": "={{ $('Information Extractor').item.json.output.invoice.items }}",
+              "type": "array"
+            },
+            {
+              "id": "0c3cbf1a-7657-4ee6-9971-cac5c99c5688",
+              "name": "Billing_Company_Phone",
+              "value": "={{ \"'\" + $json.Billing_Company_Phone }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2432,
+        160
+      ],
+      "id": "ecf1900d-c2ba-4405-844d-74dba5550f05",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.invoice.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2592,
+        160
+      ],
+      "id": "c4823dbb-fae0-4ec6-b9af-23ffe438ae27",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sjxob3ocbZVXb_JV1GJQH0vsH6bbd_OCPB--XvYpFWY",
+          "mode": "list",
+          "cachedResultName": "invoice_data_extraction",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjxob3ocbZVXb_JV1GJQH0vsH6bbd_OCPB--XvYpFWY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2058950799,
+          "mode": "list",
+          "cachedResultName": "invoice_items",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Sjxob3ocbZVXb_JV1GJQH0vsH6bbd_OCPB--XvYpFWY/edit#gid=2058950799"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "quantity": "={{ $json.quantity }}",
+            "unit_price": "={{ $json.unit_price }}",
+            "invoice_number": "={{ $('Information Extractor').item.json.output.invoice.invoice_number }}",
+            "date": "={{ $('Information Extractor').item.json.output.invoice.date }}",
+            "item_name": "={{ $json.description }}",
+            "total": "={{ $json.total }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "invoice_number",
+              "displayName": "invoice_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "item_name",
+              "displayName": "item_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "quantity",
+              "displayName": "quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "unit_price",
+              "displayName": "unit_price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total",
+              "displayName": "total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "UID",
+              "displayName": "UID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2720,
+        160
+      ],
+      "id": "853b252e-906f-40d5-ba9d-5a3942d26795",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wsyIL9ZzwKqbI9Vs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        848,
+        16
+      ],
+      "id": "e0eb9b20-65f4-48e5-8fa9-6bd29a8a140c",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "eBdMqHgR4XjyRaBB",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "DATA VALIDATION",
+        "height": 528,
+        "width": 1072
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -48
+      ],
+      "id": "dd561a7d-bd5c-41d5-aa21-fb6283c3e2b0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "DATA EXTRACTION\n",
+        "height": 528,
+        "width": 592,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        -48
+      ],
+      "id": "c0f53020-4cc6-44e4-aa3a-044927f70887",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "DATA ADDITION\n",
+        "height": 528,
+        "width": 752,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        -48
+      ],
+      "id": "c1f5a446-b3c6-472a-b42c-cd0c708d9785",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "OCR",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Extraction": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "OCR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f6c9d9db-4e20-4804-a51d-e3bb3c741b67",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5925c38e9d65e2db3cfb22863ce4ea6f10097cb84ae64390aab76355e7528fc0"
+  },
+  "id": "QS1uI7I4AYCIlyHf",
+  "tags": []
+}
