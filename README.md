@@ -1,6 +1,25 @@
 #📄 Automated Invoice Data Extraction System  
 *A no-code/low-code workflow using n8n, Google Drive, OCR, and Gemini for automated invoice processing*
 
+
+## 📸 Sample Input & Output
+
+### 🧾 Sample Invoice (Input)
+<img width="800" height="1100" alt="INV-1001" src="https://github.com/user-attachments/assets/6ab6311a-5877-4226-95d3-6d08700e6003" />
+
+
+### 📊 Extracted Output — Google Sheets
+
+#### Invoice Details Sheet
+<img width="1615" height="883" alt="image" src="https://github.com/user-attachments/assets/438e22fd-70b5-495b-95ed-f9aaf748462f" />
+
+
+#### Invoice Items Sheet
+
+<img width="1321" height="884" alt="image" src="https://github.com/user-attachments/assets/b695b931-812b-425f-acb5-a94acf971dd0" />
+
+---
+
 ---
 
 ## 🚀 Overview
