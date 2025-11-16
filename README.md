@@ -8,6 +8,9 @@
 <img width="800" height="1100" alt="INV-1001" src="https://github.com/user-attachments/assets/6ab6311a-5877-4226-95d3-6d08700e6003" />
 
 
+[invoice-1000.pdf](https://github.com/user-attachments/files/23566166/invoice-1000.pdf)
+
+
 ### 📊 Extracted Output — Google Sheets
 
 #### Invoice Details Sheet
