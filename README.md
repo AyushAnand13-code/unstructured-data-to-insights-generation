@@ -127,7 +127,8 @@ Copy code
     }
   ]
 }
-9️⃣ Write to Google Sheets — Invoice Details
+9️
+Write to Google Sheets — Invoice Details
 Appends structured fields like:
 
 Invoice Number
@@ -142,7 +143,7 @@ File Name
 
 Source
 
-🔟 Extract and Store Item List
+Extract and Store Item List
 Uses:
 
 Edit Fields node
