@@ -59,26 +59,6 @@ This workflow automates it end-to-end.
 
 ---
 
-## 📂 Folder Structure (Workflow Logic)
-
-n8n-workflow/
-│
-├── Trigger → Manual Execute
-├── Google Drive → Find Invoice Folder
-├── Loop → Process Each File
-│
-├── Switch:
-│ ├── PDF → Extract Text (PDF)
-│ │ → AI Extraction (Gemini)
-│ │ → Append to Invoice Details Sheet
-│ │ → Extract Item List → Append to Invoice Items Sheet
-│ │
-│ └── PNG/JPG → OCR API → AI Extraction
-│ → Append to Sheets
-
-yaml
-Copy code
-
 ---
 
 ## ⚙️ Step-by-step Workflow Explanation
